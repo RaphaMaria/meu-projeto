@@ -1,9 +1,11 @@
 name: CI - Build e Teste da Imagem Docker
 
+# Esse workflow vai Rodar toda vez que você der push no GitHub
 on: [push]
 
 jobs:
   build_and_test:
+  # Vai rodar numa máquina virtual Linux do GitHub
     runs-on: ubuntu-latest
     steps:
       - name: 1. Baixar o código do repositório

@@ -1,3 +1,4 @@
+#Serve para ignorar arquivos/pastas que não precisam ir para dentro da imagem Docker (como cache do Python, pastas do GitHub e variáveis sensíveis). Isso deixa a imagem mais leve e segura.
 .git
 .github
 _pycache_/
