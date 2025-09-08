@@ -1,0 +1,48 @@
+name: CI/CD - Build e PublicaÃ§Ã£o no Docker Hub
+
+on:
+  push:
+    branches: [ "main" ] # Roda apenas em pushs para a branch main
+  workflow_dispatch:      # Permite rodar manualmente
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build local para teste
+        run: docker build -t app-teste:local .
+      - name: Executar container para validar
+        run: docker run --rm app-teste:local
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: build_and_test  # SÃ³ roda se o job 'build_and_test' passar
+    if: github.ref == 'refs/heads/main' # SeguranÃ§a extra: sÃ³ publica do main
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Login no Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Gerar metadados da imagem
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/hello-docker-actions
+          tags: |
+            type=raw,value=latest
+            type=sha,format=short
+
+      - name: Construir e Publicar a imagem
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
