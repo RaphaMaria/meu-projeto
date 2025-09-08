@@ -34,7 +34,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/hello-docker-actions
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/meu-projeto
           tags: |
             type=raw,value=latest
             type=sha,format=short
